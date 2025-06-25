@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Plataforma de Cursos</title>
+</head>
+<body>
+    <h1>Cursos Disponíveis</h1>
+    <ul>
+        {% for curso in cursos %}
+            <li>
+                <h2>{{ curso.titulo }}</h2>
+                <p>{{ curso.descricao }}</p>
+                {% if curso.imagem %}
+                    <img src="{{ curso.imagem.url }}" width="200" />
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

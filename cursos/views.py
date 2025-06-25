@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from .models import Curso
 
-# Create your views here.
+def lista_cursos(request):
+    cursos = Curso.objects.all()
+    return render(request, 'cursos/lista_cursos.html', {'cursos': cursos})
