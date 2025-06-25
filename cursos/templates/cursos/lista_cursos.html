@@ -9,7 +9,7 @@
     <ul>
         {% for curso in cursos %}
             <li>
-                <h2>{{ curso.titulo }}</h2>
+                <h2><a href="{% url 'detalhe_curso' curso.slug %}">{{ curso.titulo }}</a></h2>
                 <p>{{ curso.descricao }}</p>
                 {% if curso.imagem %}
                     <img src="{{ curso.imagem.url }}" width="200" />
