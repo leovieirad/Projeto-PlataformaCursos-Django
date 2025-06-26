@@ -3,16 +3,27 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from cursos.models import Matricula
 from django.contrib.auth.decorators import login_required
+from django import forms
+
+
+
+class CustomUserCreationForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.help_text = '' 
+
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('login')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'usuarios/cadastro.html', {'form': form})
+
 
 def logar_usuario(request):
     if request.method == 'POST':
