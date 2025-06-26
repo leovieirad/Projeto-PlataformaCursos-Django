@@ -5,6 +5,13 @@
     <title>{{ curso.titulo }}</title>
 </head>
 <body>
+    {% if user.is_authenticated %}
+        <p>Bem-vindo, {{ user.username }} | <a href="{% url 'logout' %}">Sair</a></p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'cadastro' %}">Cadastrar</a></p>
+    {% endif %}
+    <hr>
+    
     <h1>{{ curso.titulo }}</h1>
     <p>{{ curso.descricao }}</p>
 
