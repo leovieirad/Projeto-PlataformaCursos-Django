@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
+from cursos.models import Matricula
+from django.contrib.auth.decorators import login_required
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
@@ -26,3 +28,10 @@ def logar_usuario(request):
 def deslogar_usuario(request):
     logout(request)
     return redirect('lista_cursos')
+
+
+@login_required
+def meus_cursos(request):
+    matriculas = Matricula.objects.filter(usuario=request.user)
+    return render(request, 'usuarios/meus_cursos.html', {'matriculas': matriculas})
+

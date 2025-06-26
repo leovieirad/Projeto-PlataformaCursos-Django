@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 class Curso(models.Model):
@@ -23,3 +24,14 @@ class Aula(models.Model):
 
     def __str__(self):
         return f"{self.titulo} ({self.curso.titulo})"
+    
+class Matricula(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='matriculas')
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='matriculas')
+    data = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'curso')
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.curso.titulo}"

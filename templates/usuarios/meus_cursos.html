@@ -1,0 +1,9 @@
+<h1>Meus Cursos</h1>
+<ul>
+    {% for m in matriculas %}
+        <li><a href="{% url 'detalhe_curso' m.curso.slug %}">{{ m.curso.titulo }}</a></li>
+    {% empty %}
+        <li>Você ainda não está matriculado em nenhum curso.</li>
+    {% endfor %}
+</ul>
+<a href="/">← Ver todos os cursos</a>
