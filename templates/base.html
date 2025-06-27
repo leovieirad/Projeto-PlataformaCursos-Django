@@ -8,11 +8,12 @@
 </head>
 
 </head>
-<body class="bg-light text-dark">
+<body id="body" class="bg-light text-dark">
     <div class="container mt-4">
         <header class="mb-4">
             <h1 class="text-primary">Plataforma de Cursos</h1>
             <nav class="mb-3">
+                <button id="toggle-theme" class="btn btn-sm btn-outline-secondary">Modo Escuro</button>
                 {% if user.is_authenticated %}
                     Olá, <strong>{{ user.username }}</strong> |
                     <a href="{% url 'meus_cursos' %}" class="btn btn-sm btn-outline-primary">Meus Cursos</a>
@@ -27,6 +28,36 @@
 
         {% block content %}{% endblock %}
     </div>
+
+<script>
+    const body = document.getElementById('body');
+    const toggleBtn = document.getElementById('toggle-theme');
+
+    // Recupera tema do localStorage
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+        body.classList.remove('bg-light', 'text-dark');
+        body.classList.add('bg-dark', 'text-light');
+        toggleBtn.textContent = 'Modo Claro';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        if (body.classList.contains('bg-light')) {
+            // Ativa modo escuro
+            body.classList.remove('bg-light', 'text-dark');
+            body.classList.add('bg-dark', 'text-light');
+            toggleBtn.textContent = 'Modo Claro';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            // Volta para modo claro
+            body.classList.remove('bg-dark', 'text-light');
+            body.classList.add('bg-light', 'text-dark');
+            toggleBtn.textContent = 'Modo Escuro';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+</script>
+
 </body>
 
 </html>
