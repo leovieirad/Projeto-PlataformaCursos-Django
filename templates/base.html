@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Plataforma de Cursos{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Plataforma de Cursos</h1>
+        {% if user.is_authenticated %}
+            <p>
+                Olá, {{ user.username }} |
+                <a href="{% url 'meus_cursos' %}">Meus Cursos</a> |
+                <a href="{% url 'logout' %}">Sair</a>
+            </p>
+        {% else %}
+            <p>
+                <a href="{% url 'login' %}">Login</a> |
+                <a href="{% url 'cadastro' %}">Cadastrar</a>
+            </p>
+        {% endif %}
+        <hr>
+    </header>
+
+    {% block content %}{% endblock %}
+</body>
+</html>

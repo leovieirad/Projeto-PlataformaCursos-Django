@@ -1,3 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro - Plataforma de Cursos{% endblock %}
+
+{% block content %}
 <h1>Cadastro</h1>
 
 <form method="post">
@@ -35,3 +40,4 @@
 </form>
 
 <a href="{% url 'login' %}">Já tem conta? Fazer login</a>
+{% endblock %}
