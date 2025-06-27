@@ -1,13 +1,38 @@
 {% extends 'base.html' %}
+{% load form_filters %}
 
-{% block title %}Login - Plataforma de Cursos{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
-<h1>Login</h1>
-<form method="post">
+<h2>Login</h2>
+
+<form method="post" class="card p-4 shadow-sm">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Entrar</button>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="id_username" class="form-label">Usuário:</label>
+        {{ form.username|add_class:"form-control" }}
+    </div>
+
+    <div class="mb-3">
+        <label for="id_password" class="form-label">Senha:</label>
+        {{ form.password|add_class:"form-control" }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Entrar</button>
 </form>
-<a href="{% url 'cadastro' %}">Criar conta</a>
+
+<a href="{% url 'cadastro' %}" class="btn btn-link mt-2">Criar conta</a>
 {% endblock %}

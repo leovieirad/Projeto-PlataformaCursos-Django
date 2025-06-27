@@ -1,38 +1,22 @@
 {% extends 'base.html' %}
-
-{% block title %}Lista - Plataforma de Cursos{% endblock %}
+{% block title %}Cursos Disponíveis{% endblock %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Plataforma de Cursos</title>
-</head>
-<body>
-    {% if user.is_authenticated %}
-        <p>
-            Bem-vindo, {{ user.username }} |
-            <a href="{% url 'meus_cursos' %}">Meus Cursos</a> |
-            <a href="{% url 'logout' %}">Sair</a>
-        </p>
-    {% else %}
-        <p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'cadastro' %}">Cadastrar</a></p>
-    {% endif %}
-    <hr>
-
-    <h1>Cursos Disponíveis</h1>
-    <ul>
-        {% for curso in cursos %}
-            <li>
-                <h2><a href="{% url 'detalhe_curso' curso.slug %}">{{ curso.titulo }}</a></h2>
-                <p>{{ curso.descricao }}</p>
+<h2>Cursos Disponíveis</h2>
+<div class="row">
+    {% for curso in cursos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
                 {% if curso.imagem %}
-                    <img src="{{ curso.imagem.url }}" width="200" />
+                    <img src="{{ curso.imagem.url }}" class="card-img-top" alt="{{ curso.titulo }}">
                 {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+                <div class="card-body">
+                    <h5 class="card-title">{{ curso.titulo }}</h5>
+                    <p class="card-text">{{ curso.descricao|truncatewords:20 }}</p>
+                    <a href="{% url 'detalhe_curso' curso.slug %}" class="btn btn-primary">Ver Curso</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

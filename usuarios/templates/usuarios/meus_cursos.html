@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Meus Cursos - Plataforma de Cursos{% endblock %}
+{% block title %}Meus Cursos{% endblock %}
 
 {% block content %}
-<h1>Meus Cursos</h1>
-<ul>
+<h2>Meus Cursos</h2>
+
+<ul class="list-group">
     {% for m in matriculas %}
-        <li><a href="{% url 'detalhe_curso' m.curso.slug %}">{{ m.curso.titulo }}</a></li>
+        <li class="list-group-item">
+            <a href="{% url 'detalhe_curso' m.curso.slug %}">{{ m.curso.titulo }}</a>
+        </li>
     {% empty %}
-        <li>Você ainda não está matriculado em nenhum curso.</li>
+        <li class="list-group-item">Você ainda não está matriculado em nenhum curso.</li>
     {% endfor %}
 </ul>
-<a href="/">← Ver todos os cursos</a>
+
+<a href="/" class="btn btn-link mt-3">← Ver todos os cursos</a>
 {% endblock %}
