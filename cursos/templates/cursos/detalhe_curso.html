@@ -30,17 +30,28 @@
     {% for aula in aulas %}
         <li class="list-group-item">
             <strong>{{ aula.titulo }}</strong><br>
+
             {% if aula.video_url %}
                 <div class="ratio ratio-16x9 my-2">
                     <iframe src="{{ aula.video_url|safe }}" frameborder="0" allowfullscreen></iframe>
                 </div>
             {% endif %}
+
             {% if aula.conteudo %}
                 <p>{{ aula.conteudo }}</p>
             {% endif %}
+
+            {% if user.is_authenticated %}
+                {% if aula.aulaassistida_set.filter(usuario=user).exists %}
+                    <span class="badge bg-success">✅ Assistida</span>
+                {% else %}
+                    <form action="{% url 'marcar_aula_assistida' aula.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-primary">Marcar como assistida</button>
+                    </form>
+                {% endif %}
+            {% endif %}
         </li>
-    {% empty %}
-        <li class="list-group-item">Este curso ainda não possui aulas.</li>
     {% endfor %}
 </ul>
 

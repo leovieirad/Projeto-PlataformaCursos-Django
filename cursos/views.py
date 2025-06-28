@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from .models import Curso
-from django.shortcuts import get_object_or_404
+from .models import Curso, Aula, AulaAssistida
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+
 
 
 def lista_cursos(request):
@@ -20,3 +20,12 @@ def matricular_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
     Matricula.objects.get_or_create(usuario=request.user, curso=curso)
     return HttpResponseRedirect(reverse('detalhe_curso', args=[slug]))
+
+
+@login_required
+def marcar_aula_assistida(request, aula_id):
+    aula = get_object_or_404(Aula, id=aula_id)
+
+    AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
+
+    return redirect('detalhe_curso', slug=aula.curso.slug)
