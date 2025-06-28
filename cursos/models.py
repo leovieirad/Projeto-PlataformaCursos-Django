@@ -35,3 +35,14 @@ class Matricula(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.curso.titulo}"
+
+class AulaAssistida(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    aula = models.ForeignKey(Aula, on_delete=models.CASCADE)
+    assistida_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'aula')  # Impede duplicadas
+
+    def __str__(self):
+        return f'{self.usuario.username} assistiu {self.aula.titulo}'
