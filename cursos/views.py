@@ -12,8 +12,18 @@ def lista_cursos(request):
 
 def detalhe_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
-    aulas = curso.aulas.all()
-    return render(request, 'cursos/detalhe_curso.html', {'curso': curso, 'aulas': aulas})
+    aulas = Aula.objects.filter(curso=curso)
+
+    # Verifica se usuário está matriculado
+    esta_matriculado = False
+    if request.user.is_authenticated:
+        esta_matriculado = curso.matriculas.filter(usuario=request.user).exists()
+
+    return render(request, 'cursos/detalhe_curso.html', {
+        'curso': curso,
+        'aulas': aulas,
+        'esta_matriculado': esta_matriculado
+    })
 
 @login_required
 def matricular_curso(request, slug):

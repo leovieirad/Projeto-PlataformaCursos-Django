@@ -11,13 +11,13 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-    {% if not curso.matriculas.filter(usuario=user).exists %}
+    {% if not esta_matriculado %}
         <form method="post" action="{% url 'matricular_curso' curso.slug %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-success">Matricular-se neste curso</button>
         </form>
     {% else %}
-        <div class="alert alert-info mt-3">Você está matriculado neste curso.</div>
+        <div class="alert alert-info mt-3">✅ Você está matriculado neste curso.</div>
     {% endif %}
 {% else %}
     <div class="alert alert-warning">Faça login para se matricular neste curso.</div>
