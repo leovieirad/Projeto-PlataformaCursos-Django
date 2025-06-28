@@ -42,7 +42,7 @@
             {% endif %}
 
             {% if user.is_authenticated %}
-                {% if aula.aulaassistida_set.filter(usuario=user).exists %}
+                {% if aula.id in aulas_assistidas_ids %}
                     <span class="badge bg-success">✅ Assistida</span>
                 {% else %}
                     <form action="{% url 'marcar_aula_assistida' aula.id %}" method="post" class="d-inline">
