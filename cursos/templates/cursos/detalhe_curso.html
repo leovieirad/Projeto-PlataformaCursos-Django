@@ -23,7 +23,14 @@
     <div class="alert alert-warning">Faça login para se matricular neste curso.</div>
 {% endif %}
 
-<hr>
+{% if user.is_authenticated and esta_matriculado %}
+    <div class="mb-4">
+        <p><strong>Progresso:</strong> {{ aulas_assistidas }} de {{ total_aulas }} aulas assistidas ({{ progresso_percentual }}%)</p>
+        <div style="height: 20px; background: #e0e0e0; border-radius: 10px;">
+            <div style="width: {{ progresso_percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
+        </div>
+    </div>
+{% endif %}
 
 <h4>Aulas:</h4>
 <ul class="list-group">
