@@ -50,11 +50,14 @@
 
             {% if user.is_authenticated %}
                 {% if aula.id in aulas_assistidas_ids %}
-                    <span class="badge bg-success">✅ Assistida</span>
+                    <form action="{% url 'desmarcar_aula_assistida' aula.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-sm">Desmarcar como assistida</button>
+                    </form>
                 {% else %}
                     <form action="{% url 'marcar_aula_assistida' aula.id %}" method="post" class="d-inline">
                         {% csrf_token %}
-                        <button class="btn btn-sm btn-outline-primary">Marcar como assistida</button>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Marcar como assistida</button>
                     </form>
                 {% endif %}
             {% endif %}

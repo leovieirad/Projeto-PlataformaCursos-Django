@@ -62,3 +62,9 @@ def marcar_aula_assistida(request, aula_id):
     AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
 
     return redirect('detalhe_curso', slug=aula.curso.slug)
+
+@login_required
+def desmarcar_aula_assistida(request, aula_id):
+    aula = get_object_or_404(Aula, id=aula_id)
+    AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
+    return redirect('detalhe_curso', slug=aula.curso.slug)
