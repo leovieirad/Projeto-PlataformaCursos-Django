@@ -46,3 +46,12 @@ class AulaAssistida(models.Model):
 
     def __str__(self):
         return f'{self.usuario.username} assistiu {self.aula.titulo}'
+    
+class Comentario(models.Model):
+    curso = models.ForeignKey('Curso', on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comentário de {self.usuario.username} no curso {self.curso.titulo}'
