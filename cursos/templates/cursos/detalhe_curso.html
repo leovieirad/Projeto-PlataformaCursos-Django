@@ -17,7 +17,10 @@
             <button type="submit" class="btn btn-success">Matricular-se neste curso</button>
         </form>
     {% else %}
-        <div class="alert alert-info mt-3">✅ Você está matriculado neste curso.</div>
+        <form method="post" action="{% url 'desmatricular_curso' curso.slug %}" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Desmatricular-se do curso</button>
+        </form>
     {% endif %}
 {% else %}
     <div class="alert alert-warning">Faça login para se matricular neste curso.</div>

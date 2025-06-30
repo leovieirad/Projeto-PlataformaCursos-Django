@@ -54,6 +54,11 @@ def matricular_curso(request, slug):
     Matricula.objects.get_or_create(usuario=request.user, curso=curso)
     return HttpResponseRedirect(reverse('detalhe_curso', args=[slug]))
 
+@login_required
+def desmatricular_curso(request, slug):
+    curso = get_object_or_404(Curso, slug=slug)
+    Matricula.objects.filter(usuario=request.user, curso=curso).delete()
+    return redirect('detalhe_curso', slug=curso.slug)
 
 @login_required
 def marcar_aula_assistida(request, aula_id):
