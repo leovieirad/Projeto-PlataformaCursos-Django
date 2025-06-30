@@ -68,5 +68,34 @@
     {% endfor %}
 </ul>
 
+{% if user.is_authenticated and esta_matriculado %}
+  <hr>
+  <h4>Deixe seu comentário</h4>
+  <form method="post" action="{% url 'comentar_curso' curso.slug %}">
+    {% csrf_token %}
+    {{ form_comentario.as_p }}
+    <button type="submit" class="btn btn-primary">Enviar comentário</button>
+  </form>
+{% else %}
+  <p class="mt-4"><a href="{% url 'login' %}">Faça login</a> para comentar neste curso.</p>
+{% endif %}
+
+<hr>
+<h4>Comentários</h4>
+{% if comentarios %}
+  {% for comentario in comentarios %}
+    <div class="card my-3">
+      <div class="card-body">
+        <strong>{{ comentario.usuario.username }}</strong> 
+        <span class="text-muted" style="font-size: 0.9em;">em {{ comentario.criado_em|date:"d/m/Y H:i" }}</span>
+        <p>{{ comentario.texto }}</p>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Este curso ainda não possui comentários.</p>
+{% endif %}
+
+
 <a href="/" class="btn btn-link mt-3">← Voltar para os cursos</a>
 {% endblock %}
