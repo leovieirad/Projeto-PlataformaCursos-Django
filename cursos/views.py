@@ -93,3 +93,23 @@ def comentar_curso(request, slug):
             comentario.curso = curso
             comentario.save()
     return redirect('detalhe_curso', slug=slug)
+
+@login_required
+def ver_aula(request, aula_id):
+    aula = get_object_or_404(Aula, id=aula_id)
+    curso = aula.curso
+    aulas = Aula.objects.filter(curso=curso).order_by('id')
+    
+    # IDs de aulas assistidas
+    assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__in=aulas).values_list('aula_id', flat=True)
+    
+    # Encontrar próxima aula
+    proxima = aulas.filter(id__gt=aula_id).first()
+    
+    return render(request, 'cursos/ver_aula.html', {
+        'curso': curso,
+        'aulas': aulas,
+        'aula_atual': aula,
+        'assistidas': assistidas,
+        'proxima_aula': proxima
+    })

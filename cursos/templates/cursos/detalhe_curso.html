@@ -73,7 +73,9 @@
   <h4>Deixe seu comentário</h4>
   <form method="post" action="{% url 'comentar_curso' curso.slug %}">
     {% csrf_token %}
-    {{ form_comentario.as_p }}
+    <div class="mb-3">
+        {{ form_comentario.texto }}
+    </div>
     <button type="submit" class="btn btn-primary">Enviar comentário</button>
   </form>
 {% else %}
