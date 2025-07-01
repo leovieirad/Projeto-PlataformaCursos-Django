@@ -1,10 +1,11 @@
 from .models import Curso, Aula, AulaAssistida, Matricula
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .forms import ComentarioForm
-
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 
 def lista_cursos(request):
@@ -87,3 +88,20 @@ def comentar_curso(request, slug):
             comentario.curso = curso
             comentario.save()
     return redirect('detalhe_curso', slug=slug)
+
+
+@csrf_exempt
+@require_POST
+@login_required
+def toggle_aula_assistida(request):
+    aula_id = request.POST.get('aula_id')
+    marcada = request.POST.get('marcada') == 'true'
+
+    aula = get_object_or_404(Aula, id=aula_id)
+    
+    if marcada:
+        AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
+    else:
+        AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
+    
+    return JsonResponse({'status': 'ok'})

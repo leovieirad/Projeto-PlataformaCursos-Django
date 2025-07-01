@@ -62,19 +62,22 @@
   {% endif %}
 
   <hr>
-  <h4>Conteúdo do curso</h4>
+  <h4>Conteúdo do Curso</h4>
   <ul class="list-group">
-    {% for a in aulas %}
-      <li class="list-group-item d-flex justify-content-between align-items-center {% if a.id == aula_atual.id %}active{% endif %}">
-        <a href="?aula={{ a.id }}" class="{% if a.id == aula_atual.id %}text-white{% endif %}">
-          {{ a.titulo }}
-        </a>
-        {% if a.id in assistidas and a.id != aula_atual.id %}
-          <span class="badge bg-success">✓</span>
+    {% for aula in aulas %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ aula.titulo }}
+
+        {% if user.is_authenticated and esta_matriculado %}
+          <input type="checkbox"
+                class="form-check-input marcar-aula"
+                data-aula-id="{{ aula.id }}"
+                {% if aula.id in aulas_assistidas_ids %}checked{% endif %}>
         {% endif %}
       </li>
     {% endfor %}
   </ul>
+
 
   <hr>
   <h4>Deixe seu comentário</h4>
@@ -105,3 +108,24 @@
 
 <a href="/" class="btn btn-link mt-3">← Voltar para os cursos</a>
 {% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const checkboxes = document.querySelectorAll('.marcar-aula');
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', function () {
+      fetch("{% url 'toggle_aula_assistida' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: new URLSearchParams({
+          'aula_id': cb.dataset.aulaId,
+          'marcada': cb.checked
+        })
+      }).then(res => res.json())
+        .then(data => console.log(data));
+    });
+  });
+});
+</script>
