@@ -27,48 +27,55 @@
 {% endif %}
 
 {% if user.is_authenticated and esta_matriculado %}
-    <div class="mb-4">
-        <p><strong>Progresso:</strong> {{ aulas_assistidas }} de {{ total_aulas }} aulas assistidas ({{ progresso_percentual }}%)</p>
-        <div style="height: 20px; background: #e0e0e0; border-radius: 10px;">
-            <div style="width: {{ progresso_percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
-        </div>
+  <div class="mb-4">
+    <p><strong>Progresso:</strong> {{ aulas_assistidas|length }} de {{ aulas|length }} aulas assistidas ({{ progresso_percentual }}%)</p>
+    <div style="height: 20px; background: #e0e0e0; border-radius: 10px;">
+        <div style="width: {{ progresso_percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
     </div>
-{% endif %}
+  </div>
 
-<h4>Aulas:</h4>
-<ul class="list-group">
-    {% for aula in aulas %}
-        <li class="list-group-item">
-            <strong>{{ aula.titulo }}</strong><br>
+  {% if aula_atual %}
+    <hr>
+    <h4>{{ aula_atual.titulo }}</h4>
 
-            {% if aula.video_url %}
-                <div class="ratio ratio-16x9 my-2">
-                    <iframe src="{{ aula.video_url|safe }}" frameborder="0" allowfullscreen></iframe>
-                </div>
-            {% endif %}
+    {% if aula_atual.video_url %}
+      <div class="ratio ratio-16x9 mb-3">
+        <iframe src="{{ aula_atual.video_url }}" frameborder="0" allowfullscreen></iframe>
+      </div>
+    {% endif %}
 
-            {% if aula.conteudo %}
-                <p>{{ aula.conteudo }}</p>
-            {% endif %}
+    {% if aula_atual.conteudo %}
+      <div class="mb-3">{{ aula_atual.conteudo|safe }}</div>
+    {% endif %}
 
-            {% if user.is_authenticated %}
-                {% if aula.id in aulas_assistidas_ids %}
-                    <form action="{% url 'desmarcar_aula_assistida' aula.id %}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-warning btn-sm">Desmarcar como assistida</button>
-                    </form>
-                {% else %}
-                    <form action="{% url 'marcar_aula_assistida' aula.id %}" method="post" class="d-inline">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-primary btn-sm">Marcar como assistida</button>
-                    </form>
-                {% endif %}
-            {% endif %}
-        </li>
+    {% if aula_atual.id in assistidas %}
+      <form method="post" action="{% url 'desmarcar_aula_assistida' aula_atual.id %}">
+        {% csrf_token %}
+        <button class="btn btn-warning">Desmarcar aula como assistida</button>
+      </form>
+    {% else %}
+      <form method="post" action="{% url 'marcar_aula_assistida' aula_atual.id %}">
+        {% csrf_token %}
+        <button class="btn btn-primary">Marcar aula como assistida</button>
+      </form>
+    {% endif %}
+  {% endif %}
+
+  <hr>
+  <h4>Conteúdo do curso</h4>
+  <ul class="list-group">
+    {% for a in aulas %}
+      <li class="list-group-item d-flex justify-content-between align-items-center {% if a.id == aula_atual.id %}active{% endif %}">
+        <a href="?aula={{ a.id }}" class="{% if a.id == aula_atual.id %}text-white{% endif %}">
+          {{ a.titulo }}
+        </a>
+        {% if a.id in assistidas and a.id != aula_atual.id %}
+          <span class="badge bg-success">✓</span>
+        {% endif %}
+      </li>
     {% endfor %}
-</ul>
+  </ul>
 
-{% if user.is_authenticated and esta_matriculado %}
   <hr>
   <h4>Deixe seu comentário</h4>
   <form method="post" action="{% url 'comentar_curso' curso.slug %}">
@@ -78,26 +85,23 @@
     </div>
     <button type="submit" class="btn btn-primary">Enviar comentário</button>
   </form>
-{% else %}
-  <p class="mt-4"><a href="{% url 'login' %}">Faça login</a> para comentar neste curso.</p>
-{% endif %}
 
-<hr>
-<h4>Comentários</h4>
-{% if comentarios %}
-  {% for comentario in comentarios %}
-    <div class="card my-3">
-      <div class="card-body">
-        <strong>{{ comentario.usuario.username }}</strong> 
-        <span class="text-muted" style="font-size: 0.9em;">em {{ comentario.criado_em|date:"d/m/Y H:i" }}</span>
-        <p>{{ comentario.texto }}</p>
+  <hr>
+  <h4>Comentários</h4>
+  {% if comentarios %}
+    {% for comentario in comentarios %}
+      <div class="card my-3">
+        <div class="card-body">
+          <strong>{{ comentario.usuario.username }}</strong> 
+          <span class="text-muted" style="font-size: 0.9em;">em {{ comentario.criado_em|date:"d/m/Y H:i" }}</span>
+          <p>{{ comentario.texto }}</p>
+        </div>
       </div>
-    </div>
-  {% endfor %}
-{% else %}
-  <p>Este curso ainda não possui comentários.</p>
+    {% endfor %}
+  {% else %}
+    <p>Este curso ainda não possui comentários.</p>
+  {% endif %}
 {% endif %}
-
 
 <a href="/" class="btn btn-link mt-3">← Voltar para os cursos</a>
 {% endblock %}

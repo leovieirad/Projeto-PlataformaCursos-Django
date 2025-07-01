@@ -13,47 +13,41 @@ def lista_cursos(request):
 
 def detalhe_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
-    aulas = Aula.objects.filter(curso=curso)
-    
+    aulas = Aula.objects.filter(curso=curso).order_by('id')
     esta_matriculado = False
-    aulas_assistidas_ids = []
-    progresso_percentual = 0
-    aulas_assistidas = 0
-    total_aulas = aulas.count()
+    aula_atual = None
+
+    if request.user.is_authenticated:
+        esta_matriculado = Matricula.objects.filter(usuario=request.user, curso=curso).exists()
+
+        # Aula atual baseada no parâmetro GET
+        aula_id = request.GET.get('aula')
+        if aula_id:
+            aula_atual = get_object_or_404(Aula, id=aula_id, curso=curso)
+        elif aulas.exists():
+            aula_atual = aulas.first()
+    else:
+        aula_atual = aulas.first() if aulas.exists() else None
+
+    # Aulas assistidas
+    aulas_assistidas = []
+    if request.user.is_authenticated:
+        aulas_assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).values_list('aula_id', flat=True)
+
     comentarios = curso.comentarios.all().order_by('-criado_em')
     form_comentario = ComentarioForm()
 
-    if request.user.is_authenticated:
-        esta_matriculado = curso.matriculas.filter(usuario=request.user).exists()
-
-        # IDs das aulas assistidas (para o template saber quais já foram marcadas)
-        aulas_assistidas_ids = AulaAssistida.objects.filter(
-            usuario=request.user,
-            aula__in=aulas
-        ).values_list('aula_id', flat=True)
-
-        # Contagem de aulas assistidas para progresso
-        aulas_assistidas = AulaAssistida.objects.filter(
-            usuario=request.user,
-            aula__in=aulas
-        ).count()
-
-        if total_aulas > 0:
-            progresso_percentual = int((aulas_assistidas / total_aulas) * 100)
-
-    
-
-    return render(request, 'cursos/detalhe_curso.html', {
+    contexto = {
         'curso': curso,
         'aulas': aulas,
+        'aula_atual': aula_atual,
         'esta_matriculado': esta_matriculado,
-        'aulas_assistidas_ids': aulas_assistidas_ids,
-        'aulas_assistidas': aulas_assistidas,
-        'total_aulas': total_aulas,
-        'progresso_percentual': progresso_percentual,
+        'assistidas': aulas_assistidas,
         'comentarios': comentarios,
         'form_comentario': form_comentario,
-    })
+    }
+
+    return render(request, 'cursos/detalhe_curso.html', contexto)
 
 
 @login_required
@@ -93,23 +87,3 @@ def comentar_curso(request, slug):
             comentario.curso = curso
             comentario.save()
     return redirect('detalhe_curso', slug=slug)
-
-@login_required
-def ver_aula(request, aula_id):
-    aula = get_object_or_404(Aula, id=aula_id)
-    curso = aula.curso
-    aulas = Aula.objects.filter(curso=curso).order_by('id')
-    
-    # IDs de aulas assistidas
-    assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__in=aulas).values_list('aula_id', flat=True)
-    
-    # Encontrar próxima aula
-    proxima = aulas.filter(id__gt=aula_id).first()
-    
-    return render(request, 'cursos/ver_aula.html', {
-        'curso': curso,
-        'aulas': aulas,
-        'aula_atual': aula,
-        'assistidas': assistidas,
-        'proxima_aula': proxima
-    })
