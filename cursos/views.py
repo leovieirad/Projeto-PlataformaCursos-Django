@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .forms import ComentarioForm
-from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 def lista_cursos(request):
@@ -91,17 +91,21 @@ def comentar_curso(request, slug):
 
 
 @csrf_exempt
-@require_POST
 @login_required
-def toggle_aula_assistida(request):
-    aula_id = request.POST.get('aula_id')
-    marcada = request.POST.get('marcada') == 'true'
+def toggle_assistida(request, aula_id):
+    if request.method == 'POST':
+        aula = get_object_or_404(Aula, id=aula_id)
+        data = json.loads(request.body)
+        assistida = data.get('assistida', False)
 
-    aula = get_object_or_404(Aula, id=aula_id)
-    
-    if marcada:
-        AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
-    else:
-        AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
-    
-    return JsonResponse({'status': 'ok'})
+        if assistida:
+            AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
+        else:
+            AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
+
+        curso = aula.curso
+        total = curso.aulas.count()
+        assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).count()
+        progresso = int((assistidas / total) * 100) if total > 0 else 0
+
+        return JsonResponse({'progresso': progresso})
