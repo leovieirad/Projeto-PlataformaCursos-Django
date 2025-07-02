@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .forms import ComentarioForm
+from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -90,11 +91,13 @@ def comentar_curso(request, slug):
     return redirect('detalhe_curso', slug=slug)
 
 
-@csrf_exempt
+@require_POST
+@csrf_protect
 @login_required
 def toggle_assistida(request, aula_id):
-    if request.method == 'POST':
-        aula = get_object_or_404(Aula, id=aula_id)
+    aula = get_object_or_404(Aula, id=aula_id)
+
+    try:
         data = json.loads(request.body)
         assistida = data.get('assistida', False)
 
@@ -109,3 +112,6 @@ def toggle_assistida(request, aula_id):
         progresso = int((assistidas / total) * 100) if total > 0 else 0
 
         return JsonResponse({'progresso': progresso})
+
+    except Exception as e:
+        return JsonResponse({'erro': str(e)}, status=400)
