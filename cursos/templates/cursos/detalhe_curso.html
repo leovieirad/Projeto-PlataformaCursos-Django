@@ -105,15 +105,12 @@
 <script>
 function getCookie(name) {
     let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Cookie inicia com o nome desejado?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+    const cookies = document.cookie ? document.cookie.split(';') : [];
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
         }
     }
     return cookieValue;
@@ -121,8 +118,8 @@ function getCookie(name) {
 
 const csrftoken = getCookie('csrftoken');
 
-document.querySelectorAll('.marcar-aula').forEach(function(checkbox) {
-    checkbox.addEventListener('change', function() {
+document.querySelectorAll('.marcar-aula').forEach(function (checkbox) {
+    checkbox.addEventListener('change', function () {
         fetch(`/aula/${this.dataset.aulaId}/toggle_assistida/`, {
             method: 'POST',
             headers: {
@@ -133,14 +130,15 @@ document.querySelectorAll('.marcar-aula').forEach(function(checkbox) {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.progresso !== undefined) {
+            if (data.success) {
                 document.getElementById('barra-progresso').style.width = `${data.progresso}%`;
                 document.getElementById('texto-progresso').innerText = `${data.progresso}%`;
             } else {
-                alert('Erro ao atualizar progresso!');
+                alert('Erro ao salvar progresso.');
             }
         });
     });
 });
 </script>
+
 {% endblock %}

@@ -92,27 +92,27 @@ def comentar_curso(request, slug):
     return redirect('detalhe_curso', slug=slug)
 
 
-@require_POST
-@csrf_protect
+@csrf_exempt
 @login_required
 def toggle_assistida(request, aula_id):
-    aula = get_object_or_404(Aula, id=aula_id)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            assistida = data.get('assistida')
 
-    try:
-        data = json.loads(request.body)
-        assistida = data.get('assistida', False)
+            aula = get_object_or_404(Aula, id=aula_id)
 
-        if assistida:
-            AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
-        else:
-            AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
+            if assistida:
+                AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
+            else:
+                AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
 
-        curso = aula.curso
-        total = curso.aulas.count()
-        assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).count()
-        progresso = int((assistidas / total) * 100) if total > 0 else 0
+            curso = aula.curso
+            total = curso.aulas.count()
+            assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).count()
+            progresso = int((assistidas / total) * 100) if total > 0 else 0
 
-        return JsonResponse({'progresso': progresso})
+            return JsonResponse({'success': True, 'progresso': progresso})
 
-    except Exception as e:
-        return JsonResponse({'erro': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
