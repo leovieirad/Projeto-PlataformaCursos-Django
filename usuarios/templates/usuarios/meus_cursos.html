@@ -5,15 +5,29 @@
 {% block content %}
 <h2>Meus Cursos</h2>
 
-<ul class="list-group">
-    {% for m in matriculas %}
-        <li class="list-group-item">
-            <a href="{% url 'detalhe_curso' m.curso.slug %}">{{ m.curso.titulo }}</a>
-        </li>
-    {% empty %}
-        <li class="list-group-item">Você ainda não está matriculado em nenhum curso.</li>
-    {% endfor %}
-</ul>
+{% if matriculas %}
+  {% for m in matriculas %}
+    <div class="card mb-3 d-flex flex-row align-items-center p-2">
+      {% if m.curso.imagem %}
+        <img src="{{ m.curso.imagem.url }}" alt="Imagem do curso"
+             style="width: 100px; height: 100px; object-fit: cover;" class="me-3 rounded">
+      {% endif %}
 
-<a href="/" class="btn btn-link mt-3">← Ver todos os cursos</a>
+      <div class="flex-grow-1">
+        <h5>{{ m.curso.titulo }}</h5>
+        <p class="mb-1 text-muted">{{ m.curso.descricao|truncatewords:20 }}</p>
+        <a href="{% url 'detalhe_curso' m.curso.slug %}" class="btn btn-sm btn-outline-primary">Ir para o curso</a>
+      </div>
+
+      <form method="post" action="{% url 'desmatricular_curso' m.curso.slug %}" class="ms-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-danger">Desmatricular</button>
+      </form>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Você ainda não está matriculado em nenhum curso.</p>
+{% endif %}
+
+<a href="{% url 'lista_cursos' %}" class="btn btn-link mt-3">← Ver todos os cursos</a>
 {% endblock %}
