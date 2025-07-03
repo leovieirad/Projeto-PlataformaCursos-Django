@@ -29,14 +29,10 @@
 {% if user.is_authenticated and esta_matriculado %}
   <div class="mb-4">
     <p>
-      <strong>Progresso:</strong>
-      <span id="texto-progresso">{{ progresso_percentual }}%</span>
-      ({{ aulas_assistidas|length }} de {{ aulas|length }} aulas assistidas)
+      <strong>Progresso:</strong> {{ aulas_assistidas|length }} de {{ aulas|length }} aulas assistidas ({{ progresso_percentual }}%)
     </p>
     <div style="height: 20px; background: #e0e0e0; border-radius: 10px;">
-      <div id="barra-progresso"
-           style="width: {{ progresso_percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;">
-      </div>
+      <div style="width: {{ progresso_percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
     </div>
   </div>
 
@@ -61,10 +57,18 @@
     {% for aula in aulas %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <a href="?aula={{ aula.id }}">{{ aula.titulo }}</a>
-        <input type="checkbox"
-               class="form-check-input marcar-aula"
-               data-aula-id="{{ aula.id }}"
-               {% if aula.id in aulas_assistidas_ids %}checked{% endif %}>
+
+        {% if aula.id in aulas_assistidas_ids %}
+          <form method="post" action="{% url 'desmarcar_aula' aula.id %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-warning">Desmarcar</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'marcar_aula' aula.id %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-success">Marcar</button>
+          </form>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>

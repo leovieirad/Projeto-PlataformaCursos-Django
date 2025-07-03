@@ -4,10 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .forms import ComentarioForm
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-import json
 
 
 def lista_cursos(request):
@@ -65,12 +61,11 @@ def desmatricular_curso(request, slug):
     Matricula.objects.filter(usuario=request.user, curso=curso).delete()
     return redirect('detalhe_curso', slug=curso.slug)
 
+
 @login_required
 def marcar_aula_assistida(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
-
     AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
-
     return redirect('detalhe_curso', slug=aula.curso.slug)
 
 @login_required
@@ -78,6 +73,7 @@ def desmarcar_aula_assistida(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
     AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
     return redirect('detalhe_curso', slug=aula.curso.slug)
+
 
 @login_required
 def comentar_curso(request, slug):
@@ -92,27 +88,3 @@ def comentar_curso(request, slug):
     return redirect('detalhe_curso', slug=slug)
 
 
-@csrf_exempt
-@login_required
-def toggle_assistida(request, aula_id):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            assistida = data.get('assistida')
-
-            aula = get_object_or_404(Aula, id=aula_id)
-
-            if assistida:
-                AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
-            else:
-                AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
-
-            curso = aula.curso
-            total = curso.aulas.count()
-            assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).count()
-            progresso = int((assistidas / total) * 100) if total > 0 else 0
-
-            return JsonResponse({'success': True, 'progresso': progresso})
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
