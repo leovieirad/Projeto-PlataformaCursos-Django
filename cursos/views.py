@@ -6,6 +6,8 @@ from django.urls import reverse
 from .forms import ComentarioForm
 
 
+
+
 def lista_cursos(request):
     cursos = Curso.objects.all()
     return render(request, 'cursos/lista_cursos.html', {'cursos': cursos})
@@ -15,23 +17,26 @@ def detalhe_curso(request, slug):
     aulas = Aula.objects.filter(curso=curso).order_by('id')
     esta_matriculado = False
     aula_atual = None
+    aulas_assistidas_ids = []
 
     if request.user.is_authenticated:
         esta_matriculado = Matricula.objects.filter(usuario=request.user, curso=curso).exists()
 
-        # Aula atual baseada no parâmetro GET
         aula_id = request.GET.get('aula')
         if aula_id:
             aula_atual = get_object_or_404(Aula, id=aula_id, curso=curso)
         elif aulas.exists():
             aula_atual = aulas.first()
+
+        aulas_assistidas_ids = list(
+            AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).values_list('aula_id', flat=True)
+        )
     else:
         aula_atual = aulas.first() if aulas.exists() else None
 
-    # Aulas assistidas
-    aulas_assistidas = []
-    if request.user.is_authenticated:
-        aulas_assistidas = AulaAssistida.objects.filter(usuario=request.user, aula__curso=curso).values_list('aula_id', flat=True)
+    progresso_percentual = (
+        int((len(aulas_assistidas_ids) / aulas.count()) * 100) if aulas.exists() else 0
+    )
 
     comentarios = curso.comentarios.all().order_by('-criado_em')
     form_comentario = ComentarioForm()
@@ -41,14 +46,15 @@ def detalhe_curso(request, slug):
         'aulas': aulas,
         'aula_atual': aula_atual,
         'esta_matriculado': esta_matriculado,
-        'assistidas': aulas_assistidas,
+        'aulas_assistidas_ids': aulas_assistidas_ids,  # variável correta
+        'progresso_percentual': progresso_percentual,
         'comentarios': comentarios,
         'form_comentario': form_comentario,
     }
 
     return render(request, 'cursos/detalhe_curso.html', contexto)
 
-
+   
 @login_required
 def matricular_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
@@ -66,13 +72,13 @@ def desmatricular_curso(request, slug):
 def marcar_aula_assistida(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
     AulaAssistida.objects.get_or_create(usuario=request.user, aula=aula)
-    return redirect('detalhe_curso', slug=aula.curso.slug)
+    return redirect(f"{reverse('detalhe_curso', args=[aula.curso.slug])}?aula={aula.id}")
 
 @login_required
 def desmarcar_aula_assistida(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
     AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
-    return redirect('detalhe_curso', slug=aula.curso.slug)
+    return redirect(f"{reverse('detalhe_curso', args=[aula.curso.slug])}?aula={aula.id}")
 
 
 @login_required
