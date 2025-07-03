@@ -65,7 +65,8 @@ def matricular_curso(request, slug):
 def desmatricular_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
     Matricula.objects.filter(usuario=request.user, curso=curso).delete()
-    return redirect('detalhe_curso', slug=curso.slug)
+    return redirect('lista_cursos')
+
 
 
 @login_required
