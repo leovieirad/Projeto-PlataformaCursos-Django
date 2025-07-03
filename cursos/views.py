@@ -10,7 +10,16 @@ from .forms import ComentarioForm
 
 def lista_cursos(request):
     cursos = Curso.objects.all()
-    return render(request, 'cursos/lista_cursos.html', {'cursos': cursos})
+    matriculados = []
+
+    if request.user.is_authenticated:
+        matriculados = Matricula.objects.filter(usuario=request.user).values_list('curso_id', flat=True)
+
+    return render(request, 'cursos/lista_cursos.html', {
+        'cursos': cursos,
+        'matriculados': matriculados,
+    })
+
 
 def detalhe_curso(request, slug):
     curso = get_object_or_404(Curso, slug=slug)

@@ -13,7 +13,20 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ curso.titulo }}</h5>
                     <p class="card-text">{{ curso.descricao|truncatewords:20 }}</p>
-                    <a href="{% url 'detalhe_curso' curso.slug %}" class="btn btn-primary">Ver Curso</a>
+
+                    {% if user.is_authenticated %}
+                        {% if curso.id in matriculados %}
+                            <a href="{% url 'detalhe_curso' curso.slug %}" class="btn btn-primary">Acessar Curso</a>
+                        {% else %}
+                            <form method="post" action="{% url 'matricular_curso' curso.slug %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Matricular-se neste curso</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}?next={% url 'lista_cursos' %}" class="btn btn-warning">Login para acessar</a>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
