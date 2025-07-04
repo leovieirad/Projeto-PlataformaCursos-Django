@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
-from cursos.models import Matricula
+from cursos.models import Aula, Matricula, AulaAssistida
 from django.contrib.auth.decorators import login_required
 from django import forms
 
@@ -41,8 +41,22 @@ def deslogar_usuario(request):
     return redirect('lista_cursos')
 
 
+
 @login_required
 def meus_cursos(request):
     matriculas = Matricula.objects.filter(usuario=request.user)
-    return render(request, 'usuarios/meus_cursos.html', {'matriculas': matriculas})
+    progresso = {}
 
+    for m in matriculas:
+        total = m.curso.aulas.count()
+        assistidas = AulaAssistida.objects.filter(aula__curso=m.curso, usuario=request.user).count()
+        progresso[m.curso.id] = {
+            'total': total,
+            'assistidas': assistidas,
+            'percentual': int((assistidas / total) * 100) if total else 0
+        }
+
+    return render(request, 'usuarios/meus_cursos.html', {
+        'matriculas': matriculas,
+        'progresso': progresso
+    })

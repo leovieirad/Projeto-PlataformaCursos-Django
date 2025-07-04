@@ -1,35 +1,37 @@
 {% extends 'base.html' %}
-
 {% block title %}Meus Cursos{% endblock %}
 
 {% block content %}
 <h2>Meus Cursos</h2>
 
-{% if matriculas %}
-  {% for m in matriculas %}
-    <div class="card mb-3 d-flex flex-row align-items-center p-2">
-      {% if m.curso.imagem %}
-        <img src="{{ m.curso.imagem.url }}" alt="Imagem do curso"
-             style="width: 100px; height: 100px; object-fit: cover;" class="me-3 rounded">
-      {% endif %}
-
-      <div class="flex-grow-1">
-        <h5>{{ m.curso.titulo }}</h5>
-        <p class="mb-1 text-muted">{{ m.curso.descricao|truncatewords:20 }}</p>
-        <a href="{% url 'detalhe_curso' m.curso.slug %}" class="btn btn-sm btn-outline-primary">Ir para o curso</a>
+{% for m in matriculas %}
+  <div class="card mb-3 d-flex flex-row align-items-center justify-content-between p-3">
+    <div class="d-flex align-items-center">
+      <img src="{{ m.curso.imagem.url }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="{{ m.curso.titulo }}">
+      <div>
+        <h5 class="mb-1">{{ m.curso.titulo }}</h5>
+        <p class="mb-2">{{ m.curso.descricao }}</p>
+        <div class="d-flex align-items-center">
+          <a href="{% url 'detalhe_curso' m.curso.slug %}" class="btn btn-primary btn-sm me-2">Ir para o curso</a>
+          {% with m.curso.id as cid %}
+            {% with progresso.cid as prog %}
+              <div style="width: 150px; height: 12px; background: #e0e0e0; border-radius: 10px;" class="me-2">
+                <div style="width: {{ prog.percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
+              </div>
+              <small>{{ prog.assistidas }} de {{ prog.total }} aulas</small>
+            {% endwith %}
+          {% endwith %}
+        </div>
       </div>
-
-      <form method="post" action="{% url 'desmatricular_curso' m.curso.slug %}" class="ms-3">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-sm btn-outline-danger">Desmatricular</button>
-      </form>
     </div>
-  {% endfor %}
-{% else %}
-  <div class="alert alert-warning">
-    Você ainda não está matriculado em nenhum curso.
+    <form method="post" action="{% url 'desmatricular_curso' m.curso.slug %}">
+      {% csrf_token %}
+      <button class="btn btn-outline-danger btn-sm">Desmatricular</button>
+    </form>
   </div>
-{% endif %}
+{% empty %}
+  <p>Você ainda não está matriculado em nenhum curso.</p>
+{% endfor %}
 
-<a href="{% url 'lista_cursos' %}" class="btn btn-link mt-3">← Ver todos os cursos</a>
+<a href="/" class="btn btn-link mt-3">← Ver todos os cursos</a>
 {% endblock %}
