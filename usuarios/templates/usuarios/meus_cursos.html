@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% load form_filters %}
 {% block title %}Meus Cursos{% endblock %}
+
 
 {% block content %}
 <h2>Meus Cursos</h2>
@@ -13,13 +15,11 @@
         <p class="mb-2">{{ m.curso.descricao }}</p>
         <div class="d-flex align-items-center">
           <a href="{% url 'detalhe_curso' m.curso.slug %}" class="btn btn-primary btn-sm me-2">Ir para o curso</a>
-          {% with m.curso.id as cid %}
-            {% with progresso.cid as prog %}
+          {% with progresso|dictkey:m.curso.id as prog %}
               <div style="width: 150px; height: 12px; background: #e0e0e0; border-radius: 10px;" class="me-2">
                 <div style="width: {{ prog.percentual }}%; background: #4CAF50; height: 100%; border-radius: 10px;"></div>
               </div>
               <small>{{ prog.assistidas }} de {{ prog.total }} aulas</small>
-            {% endwith %}
           {% endwith %}
         </div>
       </div>

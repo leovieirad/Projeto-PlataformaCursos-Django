@@ -5,3 +5,7 @@ register = template.Library()
 @register.filter(name='add_class')
 def add_class(field, css):
     return field.as_widget(attrs={"class": css})
+
+@register.filter
+def dictkey(dict_data, key):
+    return dict_data.get(key)
