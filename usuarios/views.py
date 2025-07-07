@@ -1,10 +1,8 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
-from cursos.models import Aula, Matricula, AulaAssistida
+from cursos.models import Matricula, AulaAssistida
 from django.contrib.auth.decorators import login_required
-from django import forms
-
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -59,4 +57,10 @@ def meus_cursos(request):
     return render(request, 'usuarios/meus_cursos.html', {
         'matriculas': matriculas,
         'progresso': progresso
+    })
+
+@login_required
+def perfil(request):
+    return render(request, 'usuarios/perfil.html', {
+        'usuario': request.user
     })
