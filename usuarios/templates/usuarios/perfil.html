@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
-{% block title %}Meu Perfil{% endblock %}
+{% block title %}Perfil do Usuário{% endblock %}
 
 {% block content %}
-<h2>Perfil do Usuário</h2>
-<div class="card p-4">
-  <p><strong>Nome de usuário:</strong> {{ usuario.username }}</p>
-  <p><strong>Email:</strong> {{ usuario.email }}</p>
-  <p><strong>Primeiro nome:</strong> {{ usuario.first_name }}</p>
-  <p><strong>Sobrenome:</strong> {{ usuario.last_name }}</p>
-</div>
+<h2>Perfil de {{ usuario.get_full_name|default:usuario.username }}</h2>
+<p><strong>Email:</strong> {{ usuario.email }}</p>
+
+<h3 class="mt-4">Cursos Matriculados</h3>
+
+{% for m in matriculas %}
+  <div class="mb-3 p-3 bg-light rounded">
+    <h5>{{ m.curso.titulo }}</h5>
+    <div class="progress" style="height: 20px;">
+      <div class="progress-bar bg-success" role="progressbar"
+           style="width: {{ progresso.m.curso.id.percentual }}%;" 
+           aria-valuenow="{{ progresso.m.curso.id.percentual }}" 
+           aria-valuemin="0" aria-valuemax="100">
+        {{ progresso.m.curso.id.percentual }}%
+      </div>
+    </div>
+    <small>{{ progresso.m.curso.id.assistidas }} de {{ progresso.m.curso.id.total }} aulas assistidas</small>
+  </div>
+{% empty %}
+  <p>Você ainda não está matriculado em nenhum curso.</p>
+{% endfor %}
 {% endblock %}

@@ -59,8 +59,23 @@ def meus_cursos(request):
         'progresso': progresso
     })
 
+
 @login_required
-def perfil(request):
+def perfil_usuario(request):
+    matriculas = Matricula.objects.filter(usuario=request.user)
+    
+    progresso = {}
+    for m in matriculas:
+        total = m.curso.aulas.count()
+        assistidas = m.curso.aulas_assistidas_por_usuario(request.user).count()
+        progresso[m.curso.id] = {
+            'total': total,
+            'assistidas': assistidas,
+            'percentual': int((assistidas / total) * 100) if total else 0
+        }
+
     return render(request, 'usuarios/perfil.html', {
-        'usuario': request.user
+        'usuario': request.user,
+        'matriculas': matriculas,
+        'progresso': progresso
     })
