@@ -8,6 +8,9 @@ class Curso(models.Model):
     imagem = models.ImageField(upload_to='cursos/imagens/', blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True)
 
+    def aulas_assistidas_por_usuario(self, usuario):
+        return AulaAssistida.objects.filter(usuario=usuario, aula__curso=self)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.titulo)

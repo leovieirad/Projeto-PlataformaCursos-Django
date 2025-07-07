@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
-from cursos.models import Matricula, AulaAssistida
+from cursos.models import Matricula, AulaAssistida, Aula
 from django.contrib.auth.decorators import login_required
 
 
@@ -62,12 +62,13 @@ def meus_cursos(request):
 
 @login_required
 def perfil_usuario(request):
-    matriculas = Matricula.objects.filter(usuario=request.user)
-    
+    usuario = request.user
+    matriculas = Matricula.objects.filter(usuario=usuario)
     progresso = {}
+
     for m in matriculas:
         total = m.curso.aulas.count()
-        assistidas = m.curso.aulas_assistidas_por_usuario(request.user).count()
+        assistidas = m.curso.aulas_assistidas_por_usuario(usuario).count()  # <-- aqui estava o erro
         progresso[m.curso.id] = {
             'total': total,
             'assistidas': assistidas,
@@ -75,7 +76,7 @@ def perfil_usuario(request):
         }
 
     return render(request, 'usuarios/perfil.html', {
-        'usuario': request.user,
+        'usuario': usuario,
         'matriculas': matriculas,
         'progresso': progresso
     })
