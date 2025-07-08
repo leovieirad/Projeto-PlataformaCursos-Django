@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.text import slugify
 
 class Curso(models.Model):
@@ -29,7 +29,7 @@ class Aula(models.Model):
         return f"{self.titulo} ({self.curso.titulo})"
     
 class Matricula(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='matriculas')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='matriculas')
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='matriculas')
     data = models.DateTimeField(auto_now_add=True)
 
@@ -40,7 +40,7 @@ class Matricula(models.Model):
         return f"{self.usuario.username} - {self.curso.titulo}"
 
 class AulaAssistida(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     aula = models.ForeignKey(Aula, on_delete=models.CASCADE)
     assistida_em = models.DateTimeField(auto_now_add=True)
 
@@ -52,7 +52,7 @@ class AulaAssistida(models.Model):
     
 class Comentario(models.Model):
     curso = models.ForeignKey('Curso', on_delete=models.CASCADE, related_name='comentarios')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     texto = models.TextField()
     criado_em = models.DateTimeField(auto_now_add=True)
 

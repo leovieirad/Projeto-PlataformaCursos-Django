@@ -60,6 +60,11 @@ def meus_cursos(request):
     })
 
 
+# usuarios/views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from cursos.models import Matricula, Aula
+
 @login_required
 def perfil_usuario(request):
     usuario = request.user
@@ -68,11 +73,15 @@ def perfil_usuario(request):
 
     for m in matriculas:
         total = m.curso.aulas.count()
-        assistidas = m.curso.aulas_assistidas_por_usuario(usuario).count()  # <-- aqui estava o erro
+        assistidas = Aula.objects.filter(
+            curso=m.curso, aulaassistida__usuario=usuario
+        ).count()
+        percentual = int((assistidas / total) * 100) if total > 0 else 0
+
         progresso[m.curso.id] = {
             'total': total,
             'assistidas': assistidas,
-            'percentual': int((assistidas / total) * 100) if total else 0
+            'percentual': percentual
         }
 
     return render(request, 'usuarios/perfil.html', {
