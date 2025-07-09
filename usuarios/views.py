@@ -60,16 +60,11 @@ def meus_cursos(request):
     })
 
 
-# usuarios/views.py
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from cursos.models import Matricula, Aula
 
 @login_required
 def perfil_usuario(request):
     usuario = request.user
     matriculas = Matricula.objects.filter(usuario=usuario)
-    progresso = {}
 
     for m in matriculas:
         total = m.curso.aulas.count()
@@ -78,7 +73,8 @@ def perfil_usuario(request):
         ).count()
         percentual = int((assistidas / total) * 100) if total > 0 else 0
 
-        progresso[m.curso.id] = {
+        # adiciona diretamente o progresso na matrícula
+        m.progresso = {
             'total': total,
             'assistidas': assistidas,
             'percentual': percentual
@@ -86,6 +82,5 @@ def perfil_usuario(request):
 
     return render(request, 'usuarios/perfil.html', {
         'usuario': usuario,
-        'matriculas': matriculas,
-        'progresso': progresso
+        'matriculas': matriculas
     })
