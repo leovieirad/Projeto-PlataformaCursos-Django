@@ -1,3 +1,5 @@
+from .forms import UsuarioForm
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
@@ -61,26 +63,36 @@ def meus_cursos(request):
 
 
 
+
 @login_required
 def perfil_usuario(request):
     usuario = request.user
     matriculas = Matricula.objects.filter(usuario=usuario)
+    progresso = {}
 
     for m in matriculas:
-        total = m.curso.aulas.count()
-        assistidas = Aula.objects.filter(
-            curso=m.curso, aulaassistida__usuario=usuario
-        ).count()
-        percentual = int((assistidas / total) * 100) if total > 0 else 0
-
-        # adiciona diretamente o progresso na matrícula
-        m.progresso = {
+        aulas = Aula.objects.filter(curso=m.curso)
+        total = aulas.count()
+        assistidas = AulaAssistida.objects.filter(usuario=usuario, aula__in=aulas).count()
+        percentual = int((assistidas / total) * 100) if total else 0
+        progresso[m.curso.id] = {
             'total': total,
             'assistidas': assistidas,
             'percentual': percentual
         }
 
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Dados atualizados com sucesso.")
+            return redirect('perfil')  # ou 'usuarios:perfil' se você usa namespaces
+    else:
+        form = UsuarioForm(instance=usuario)
+
     return render(request, 'usuarios/perfil.html', {
         'usuario': usuario,
-        'matriculas': matriculas
+        'matriculas': matriculas,
+        'progresso': progresso,
+        'form': form
     })

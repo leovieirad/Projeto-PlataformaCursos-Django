@@ -15,6 +15,20 @@
     <p class="mb-0"><strong>Email:</strong> {{ usuario.email }}</p>
   </div>
 </div>
+<form method="POST" class="mb-4">
+  {% csrf_token %}
+  <div class="row mb-2">
+    <div class="col">
+      <label for="id_first_name" class="form-label text-light">Nome</label>
+      <input type="text" name="first_name" value="{{ form.first_name.value }}" class="form-control" id="id_first_name">
+    </div>
+    <div class="col">
+      <label for="id_last_name" class="form-label text-light">Sobrenome</label>
+      <input type="text" name="last_name" value="{{ form.last_name.value }}" class="form-control" id="id_last_name">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-success">Salvar Alterações</button>
+</form>
 
 <h3 class="mt-4">Cursos Matriculados</h3>
 
