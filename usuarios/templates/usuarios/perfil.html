@@ -15,7 +15,8 @@
     <p class="mb-0"><strong>Email:</strong> {{ usuario.email }}</p>
   </div>
 </div>
-<form method="POST" class="mb-4">
+
+<form method="POST" enctype="multipart/form-data" class="mb-4">
   {% csrf_token %}
   <div class="row mb-2">
     <div class="col">
@@ -27,6 +28,12 @@
       <input type="text" name="last_name" value="{{ form.last_name.value }}" class="form-control" id="id_last_name">
     </div>
   </div>
+
+  <div class="mb-3">
+    <label for="id_foto" class="form-label text-light">Foto de Perfil</label>
+    <input type="file" name="foto" class="form-control" id="id_foto">
+  </div>
+
   <button type="submit" class="btn btn-success">Salvar Alterações</button>
 </form>
 
@@ -38,16 +45,15 @@
     
     <div class="progress mb-1" style="height: 25px;">
       <div class="progress-bar bg-success text-white" role="progressbar"
-          style="width: {{ m.progresso.percentual }}%;"
-          aria-valuenow="{{ m.progresso.percentual }}"
-          aria-valuemin="0" aria-valuemax="100">
+           style="width: {{ m.progresso.percentual }}%;"
+           aria-valuenow="{{ m.progresso.percentual }}"
+           aria-valuemin="0" aria-valuemax="100">
         {{ m.progresso.percentual }}%
       </div>
     </div>
 
     <small class="text-dark">{{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas</small>
   </div>
-
 {% empty %}
   <p>Você ainda não está matriculado em nenhum curso.</p>
 {% endfor %}

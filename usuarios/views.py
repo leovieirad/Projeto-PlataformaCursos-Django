@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from cursos.models import Matricula, AulaAssistida, Aula
 from django.contrib.auth.decorators import login_required
+from .models import Perfil
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -81,12 +82,20 @@ def perfil_usuario(request):
             'percentual': percentual
         }
 
+    perfil, _ = Perfil.objects.get_or_create(user=usuario)
+
+
     if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
             form.save()
+
+            if 'foto' in request.FILES:
+                perfil.foto = request.FILES['foto']
+                perfil.save()
+
             messages.success(request, "Dados atualizados com sucesso.")
-            return redirect('perfil')  # ou 'usuarios:perfil' se você usa namespaces
+            return redirect('perfil')
     else:
         form = UsuarioForm(instance=usuario)
 

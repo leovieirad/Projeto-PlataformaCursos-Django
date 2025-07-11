@@ -9,5 +9,6 @@ class Perfil(models.Model):
     def __str__(self):
         return self.user.get_full_name() or self.user.username
 
+
 class Usuario(AbstractUser):
     foto = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
