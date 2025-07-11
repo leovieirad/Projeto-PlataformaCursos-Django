@@ -69,14 +69,14 @@ def meus_cursos(request):
 def perfil_usuario(request):
     usuario = request.user
     matriculas = Matricula.objects.filter(usuario=usuario)
-    progresso = {}
 
     for m in matriculas:
         aulas = Aula.objects.filter(curso=m.curso)
         total = aulas.count()
         assistidas = AulaAssistida.objects.filter(usuario=usuario, aula__in=aulas).count()
         percentual = int((assistidas / total) * 100) if total else 0
-        progresso[m.curso.id] = {
+
+        m.progresso = {
             'total': total,
             'assistidas': assistidas,
             'percentual': percentual
@@ -84,16 +84,13 @@ def perfil_usuario(request):
 
     perfil, _ = Perfil.objects.get_or_create(user=usuario)
 
-
     if request.method == 'POST':
         form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
             form.save()
-
             if 'foto' in request.FILES:
                 perfil.foto = request.FILES['foto']
                 perfil.save()
-
             messages.success(request, "Dados atualizados com sucesso.")
             return redirect('perfil')
     else:
@@ -102,6 +99,5 @@ def perfil_usuario(request):
     return render(request, 'usuarios/perfil.html', {
         'usuario': usuario,
         'matriculas': matriculas,
-        'progresso': progresso,
         'form': form
     })

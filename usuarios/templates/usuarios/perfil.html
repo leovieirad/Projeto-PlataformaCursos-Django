@@ -41,18 +41,19 @@
 
 {% for m in matriculas %}
   <div class="mb-3 p-3 bg-light rounded">
-    <h5 class="text-dark">{{ m.curso.titulo }}</h5>
-    
+    <h5 class="text-dark">{{ m.curso.titulo }}</h5>  
     <div class="progress mb-1" style="height: 25px;">
       <div class="progress-bar bg-success text-white" role="progressbar"
-           style="width: {{ m.progresso.percentual }}%;"
-           aria-valuenow="{{ m.progresso.percentual }}"
-           aria-valuemin="0" aria-valuemax="100">
+          style="width: {{ m.progresso.percentual }}%;"
+          aria-valuenow="{{ m.progresso.percentual }}"
+          aria-valuemin="0" aria-valuemax="100">
         {{ m.progresso.percentual }}%
       </div>
     </div>
 
-    <small class="text-dark">{{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas</small>
+    <small class="text-dark">
+      {{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas
+    </small>
   </div>
 {% empty %}
   <p>Você ainda não está matriculado em nenhum curso.</p>
