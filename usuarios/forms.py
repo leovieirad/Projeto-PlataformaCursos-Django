@@ -10,3 +10,18 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['first_name', 'last_name']
+
+from django import forms
+from .models import Perfil
+
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = Perfil
+        fields = [
+            'foto', 'titulo', 'bio',
+            'facebook_url', 'instagram_url', 'linkedin_url',
+            'tiktok_user', 'x_user', 'youtube_url'
+        ]
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 3}),
+        }

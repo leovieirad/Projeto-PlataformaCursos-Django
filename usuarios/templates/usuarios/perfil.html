@@ -1,61 +1,106 @@
 {% extends 'base.html' %}
+{% load form_filters %}
+
+
 {% block title %}Perfil do Usuário{% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center mb-4">
-  {% if usuario.perfil.foto %}
-    <img src="{{ usuario.perfil.foto.url }}" class="rounded-circle me-3" width="80" height="80">
-  {% else %}
-    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
-      <span>Sem Foto</span>
-    </div>
-  {% endif %}
-  <div>
-    <h2 class="mb-1">{{ usuario.first_name }} {{ usuario.last_name }}</h2>
-    <p class="mb-0"><strong>Email:</strong> {{ usuario.email }}</p>
-  </div>
-</div>
-
-<form method="POST" enctype="multipart/form-data" class="mb-4">
-  {% csrf_token %}
-  <div class="row mb-2">
-    <div class="col">
-      <label for="id_first_name" class="form-label text-light">Nome</label>
-      <input type="text" name="first_name" value="{{ form.first_name.value }}" class="form-control" id="id_first_name">
-    </div>
-    <div class="col">
-      <label for="id_last_name" class="form-label text-light">Sobrenome</label>
-      <input type="text" name="last_name" value="{{ form.last_name.value }}" class="form-control" id="id_last_name">
+<div class="card bg-dark text-white p-4 mb-4">
+  <div class="d-flex align-items-center mb-4">
+    {% if usuario.perfil.foto %}
+      <img src="{{ usuario.perfil.foto.url }}" class="rounded-circle me-3 border border-light" width="80" height="80">
+    {% else %}
+      <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px;">
+        <span class="text-white">Sem Foto</span>
+      </div>
+    {% endif %}
+    <div>
+      <h2 class="mb-1">{{ usuario.first_name }} {{ usuario.last_name }}</h2>
+      <p class="mb-0"><strong>Email:</strong> {{ usuario.email }}</p>
     </div>
   </div>
 
-  <div class="mb-3">
-    <label for="id_foto" class="form-label text-light">Foto de Perfil</label>
-    <input type="file" name="foto" class="form-control" id="id_foto">
-  </div>
-
-  <button type="submit" class="btn btn-success">Salvar Alterações</button>
-</form>
-
-<h3 class="mt-4">Cursos Matriculados</h3>
-
-{% for m in matriculas %}
-  <div class="mb-3 p-3 bg-light rounded">
-    <h5 class="text-dark">{{ m.curso.titulo }}</h5>  
-    <div class="progress mb-1" style="height: 25px;">
-      <div class="progress-bar bg-success text-white" role="progressbar"
-          style="width: {{ m.progresso.percentual }}%;"
-          aria-valuenow="{{ m.progresso.percentual }}"
-          aria-valuemin="0" aria-valuemax="100">
-        {{ m.progresso.percentual }}%
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="id_first_name" class="form-label">Nome</label>
+        {{ form.first_name|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6">
+        <label for="id_last_name" class="form-label">Sobrenome</label>
+        {{ form.last_name|add_class:"form-control bg-dark text-white border-light" }}
       </div>
     </div>
 
-    <small class="text-dark">
-      {{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas
-    </small>
-  </div>
-{% empty %}
-  <p>Você ainda não está matriculado em nenhum curso.</p>
-{% endfor %}
+    <div class="mb-3">
+      <label class="form-label">Foto de Perfil</label><br>
+      {{ perfil_form.foto }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Profissão</label>
+      {{ perfil_form.titulo|add_class:"form-control bg-dark text-white border-light" }}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Biografia</label>
+      {{ perfil_form.bio|add_class:"form-control bg-dark text-white border-light" }}
+    </div>
+
+    <hr class="border-light">
+
+    <h5 class="mb-3">Links Sociais</h5>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-facebook me-1"></i>Facebook</label>
+        {{ perfil_form.facebook_url|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-instagram me-1"></i>Instagram</label>
+        {{ perfil_form.instagram_url|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-linkedin me-1"></i>LinkedIn</label>
+        {{ perfil_form.linkedin_url|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-tiktok me-1"></i>TikTok</label>
+        {{ perfil_form.tiktok_user|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-twitter-x me-1"></i>X</label>
+        {{ perfil_form.x_user|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label"><i class="bi bi-youtube me-1"></i>YouTube</label>
+        {{ perfil_form.youtube_url|add_class:"form-control bg-dark text-white border-light" }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Salvar Alterações</button>
+  </form>
+</div>
+
+<div class="card bg-dark text-white p-4 mt-5 mb-4"> {# Novo contêiner para a seção de cursos #}
+  <h3 class="mb-4">Cursos Matriculados</h3> {# O h3 não precisa mais de text-body #}
+
+  {% for m in matriculas %}
+    <div class="mb-3 p-3 bg-dark rounded text-white border border-light"> {# Container do item do curso, já estava certo #}
+      <h5 class="text-white">{{ m.curso.titulo }}</h5> {# Título do curso #}
+      <div class="progress mb-1" style="height: 25px;">
+        <div class="progress-bar bg-success text-white" role="progressbar" {# Barra de preenchimento #}
+             style="width: {{ m.progresso.percentual }}%;"
+             aria-valuenow="{{ m.progresso.percentual }}"
+             aria-valuemin="0" aria-valuemax="100">
+          {{ m.progresso.percentual }}%
+        </div>
+      </div>
+      <small class="text-white">{{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas</small> {# Texto de progresso #}
+    </div>
+  {% empty %}
+    <p class="text-white">Você ainda não está matriculado em nenhum curso.</p> {# Mensagem de curso vazio #}
+  {% endfor %}
+</div>
 {% endblock %}

@@ -1,4 +1,4 @@
-from .forms import UsuarioForm
+from .forms import UsuarioForm, PerfilForm
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -63,11 +63,10 @@ def meus_cursos(request):
     })
 
 
-
-
 @login_required
 def perfil_usuario(request):
     usuario = request.user
+    perfil, _ = Perfil.objects.get_or_create(user=usuario)
     matriculas = Matricula.objects.filter(usuario=usuario)
 
     for m in matriculas:
@@ -75,29 +74,24 @@ def perfil_usuario(request):
         total = aulas.count()
         assistidas = AulaAssistida.objects.filter(usuario=usuario, aula__in=aulas).count()
         percentual = int((assistidas / total) * 100) if total else 0
-
-        m.progresso = {
-            'total': total,
-            'assistidas': assistidas,
-            'percentual': percentual
-        }
-
-    perfil, _ = Perfil.objects.get_or_create(user=usuario)
+        m.progresso = {'total': total, 'assistidas': assistidas, 'percentual': percentual}
 
     if request.method == 'POST':
-        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
-        if form.is_valid():
-            form.save()
-            if 'foto' in request.FILES:
-                perfil.foto = request.FILES['foto']
-                perfil.save()
+        usuario_form = UsuarioForm(request.POST, instance=usuario)
+        perfil_form = PerfilForm(request.POST, request.FILES, instance=perfil)
+
+        if usuario_form.is_valid() and perfil_form.is_valid():
+            usuario_form.save()
+            perfil_form.save()
             messages.success(request, "Dados atualizados com sucesso.")
             return redirect('perfil')
     else:
-        form = UsuarioForm(instance=usuario)
+        usuario_form = UsuarioForm(instance=usuario)
+        perfil_form = PerfilForm(instance=perfil)
 
     return render(request, 'usuarios/perfil.html', {
         'usuario': usuario,
         'matriculas': matriculas,
-        'form': form
+        'form': usuario_form,
+        'perfil_form': perfil_form,
     })
