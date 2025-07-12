@@ -12,7 +12,9 @@
 <body id="body" class="bg-light text-dark">
     <div class="container mt-4">
         <header class="mb-4">
-            <h1 class="text-primary">Plataforma de Cursos</h1>
+            <a href="{% url 'lista_cursos' %}" class="text-primary text-decoration-none h1 d-block">
+                Plataforma de Cursos
+            </a>
             <nav class="mb-3">
                 <button id="toggle-theme" class="btn btn-sm btn-outline-secondary">🌙</button>
                 {% if user.is_authenticated %}
