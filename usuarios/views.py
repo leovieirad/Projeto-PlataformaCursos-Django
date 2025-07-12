@@ -1,18 +1,23 @@
 from .forms import UsuarioForm, PerfilForm
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from cursos.models import Matricula, AulaAssistida, Aula
 from django.contrib.auth.decorators import login_required
 from .models import Perfil
 
+User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User 
+        fields = UserCreationForm.Meta.fields
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.help_text = '' 
+            field.help_text = ''
 
 
 def cadastrar_usuario(request):

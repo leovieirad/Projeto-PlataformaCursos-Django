@@ -83,24 +83,24 @@
   </form>
 </div>
 
-<div class="card bg-dark text-white p-4 mt-5 mb-4"> {# Novo contêiner para a seção de cursos #}
-  <h3 class="mb-4">Cursos Matriculados</h3> {# O h3 não precisa mais de text-body #}
+<div class="card bg-dark text-white p-4 mt-5 mb-4"> 
+  <h3 class="mb-4">Cursos Matriculados</h3> 
 
   {% for m in matriculas %}
-    <div class="mb-3 p-3 bg-dark rounded text-white border border-light"> {# Container do item do curso, já estava certo #}
-      <h5 class="text-white">{{ m.curso.titulo }}</h5> {# Título do curso #}
+    <div class="mb-3 p-3 bg-dark rounded text-white border border-light"> 
+      <h5 class="text-white">{{ m.curso.titulo }}</h5> 
       <div class="progress mb-1" style="height: 25px;">
-        <div class="progress-bar bg-success text-white" role="progressbar" {# Barra de preenchimento #}
+        <div class="progress-bar bg-success text-white" role="progressbar" 
              style="width: {{ m.progresso.percentual }}%;"
              aria-valuenow="{{ m.progresso.percentual }}"
              aria-valuemin="0" aria-valuemax="100">
           {{ m.progresso.percentual }}%
         </div>
       </div>
-      <small class="text-white">{{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas</small> {# Texto de progresso #}
+      <small class="text-white">{{ m.progresso.assistidas }} de {{ m.progresso.total }} aulas assistidas</small> 
     </div>
   {% empty %}
-    <p class="text-white">Você ainda não está matriculado em nenhum curso.</p> {# Mensagem de curso vazio #}
+    <p class="text-white">Você ainda não está matriculado em nenhum curso.</p> 
   {% endfor %}
 </div>
 {% endblock %}

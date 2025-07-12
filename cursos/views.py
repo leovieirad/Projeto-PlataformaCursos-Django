@@ -1,7 +1,7 @@
 from .models import Curso, Aula, AulaAssistida, Matricula
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ComentarioForm
 
