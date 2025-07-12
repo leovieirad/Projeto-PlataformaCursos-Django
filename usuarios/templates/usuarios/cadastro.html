@@ -29,6 +29,11 @@
     </div>
 
     <div class="mb-3">
+        <label for="id_email" class="form-label">Email:</label>
+        {{ form.email|add_class:"form-control" }}
+    </div>
+
+    <div class="mb-3">
         <label for="id_password1" class="form-label">Senha:</label>
         {{ form.password1|add_class:"form-control" }}
     </div>

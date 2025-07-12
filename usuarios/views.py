@@ -1,4 +1,5 @@
 from .forms import UsuarioForm, PerfilForm
+from django import forms
 from django.contrib import messages
 from django.contrib.auth import login, logout, get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -10,16 +11,24 @@ from .models import Perfil
 User = get_user_model()
 
 class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, label='Email')
+
     class Meta(UserCreationForm.Meta):
-        model = User 
-        fields = UserCreationForm.Meta.fields
+        model = User
+        fields = ("username", "email")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.help_text = ''
 
-
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+    
 def cadastrar_usuario(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
