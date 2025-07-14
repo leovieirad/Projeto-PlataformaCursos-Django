@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ComentarioForm
-from usuarios.models import Usuario 
-
+from usuarios.models import Pontuacao
 
 
 
@@ -84,20 +83,26 @@ def marcar_aula(request, aula_id):
     aula = Aula.objects.get(id=aula_id)
     usuario = request.user
 
-    # Verifica se já foi assistida
     if not AulaAssistida.objects.filter(aula=aula, usuario=usuario).exists():
         AulaAssistida.objects.create(aula=aula, usuario=usuario)
-        usuario.pontos += 10  # soma 10 pontos por aula assistida
+        usuario.pontos += 10 
         usuario.save()
 
     return redirect('detalhe_curso', slug=aula.curso.slug)
 
 @login_required
-def desmarcar_aula_assistida(request, aula_id):
+def desmarcar_aula(request, aula_id):
     aula = get_object_or_404(Aula, id=aula_id)
-    AulaAssistida.objects.filter(usuario=request.user, aula=aula).delete()
-    return redirect(f"{reverse('detalhe_curso', args=[aula.curso.slug])}?aula={aula.id}")
 
+    assistida = AulaAssistida.objects.filter(usuario=request.user, aula=aula).first()
+    if assistida:
+        assistida.delete()
+
+        pontuacao, _ = Pontuacao.objects.get_or_create(usuario=request.user)
+        pontuacao.pontos = max(0, pontuacao.pontos - 10)  
+        pontuacao.save()
+
+    return redirect('detalhe_curso', slug=aula.curso.slug)
 
 @login_required
 def comentar_curso(request, slug):
