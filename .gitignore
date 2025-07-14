@@ -1,0 +1,37 @@
+# Ambiente virtual
+venv/
+ENV/
+env/
+
+# Arquivos do Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Banco de dados SQLite
+*.sqlite3
+*.db
+
+# Arquivos de configurações secretas
+*.env
+.env.*
+
+# Mídias e uploads
+/media/
+fotos_perfil/
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos do VSCode ou PyCharm
+.vscode/
+.idea/
+
+# Arquivos de logs
+*.log
+
+# Arquivos de migração desnecessários
+*/migrations/__pycache__/
