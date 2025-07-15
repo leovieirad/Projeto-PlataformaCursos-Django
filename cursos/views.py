@@ -5,9 +5,14 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ComentarioForm
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 
-
-
+INSIGNIAS = [
+    (200, "Mestre"),
+    (100, "Avançado"),
+    (100, "Intermediário"),
+    (50, "Iniciante"),
+]
 
 def lista_cursos(request):
     cursos = Curso.objects.all()
@@ -81,16 +86,30 @@ def desmatricular_curso(request, slug):
 
 @login_required
 def marcar_aula(request, aula_id):
-    aula = Aula.objects.get(id=aula_id)
+    aula = get_object_or_404(Aula, id=aula_id)
     usuario = request.user
 
     if not AulaAssistida.objects.filter(aula=aula, usuario=usuario).exists():
         AulaAssistida.objects.create(aula=aula, usuario=usuario)
+
+        insignia_antes = usuario.insignea
+
         usuario.pontos += 10 
         usuario.save()
+
+        insignia_depois = usuario.insignea
+
         messages.success(request, f'Você ganhou 10 pontos por concluir a aula "{aula.titulo}"!')
+    
+    if insignia_depois != insignia_antes:
+        mensagem_html = mark_safe(
+            f'<div class="fw-bold fs-5">🏅 Insígnia Desbloqueada!</div>'
+            f'<div>Parabéns! Você alcançou a insígnia <strong>{insignia_depois}</strong>.</div>'
+        )
+        messages.warning(request, mensagem_html)
 
     return redirect('detalhe_curso', slug=aula.curso.slug)
+
 
 @login_required
 def desmarcar_aula(request, aula_id):

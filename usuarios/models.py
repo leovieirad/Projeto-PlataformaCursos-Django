@@ -22,3 +22,16 @@ class Perfil(models.Model):
 class Usuario(AbstractUser):
     foto = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
     pontos = models.IntegerField(default=0)
+
+    @property
+    def insignea(self):
+        if self.pontos >= 500:
+            return "🏆 Mestre"
+        elif self.pontos >= 200:
+            return "🥇 Avançado"
+        elif self.pontos >= 100:
+            return "🥈 Intermediário"
+        elif self.pontos >= 50:
+            return "🥉 Iniciante"
+        return "🔰 Novato"
+
