@@ -13,15 +13,14 @@
     <div class="container mt-4">
         <header class="mb-4">
             {% if messages %}
-                <div>
-                    {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor %}
+            <div id="mensagens-alerta" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-2" role="alert">
+                    {{ message }}
                 </div>
-                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
             <a href="{% url 'lista_cursos' %}" class="text-primary text-decoration-none h1 d-block">
                 Plataforma de Cursos
             </a>
@@ -68,6 +67,18 @@
         }
     });
 </script>
+
+<script>
+  setTimeout(function () {
+    const alertas = document.querySelectorAll('#mensagens-alerta .alert');
+    alertas.forEach(alerta => {
+      alerta.classList.remove('show');
+      alerta.classList.add('fade');
+      setTimeout(() => alerta.remove(), 500);
+    });
+  }, 3000);
+</script>
+
 
 </body>
 
