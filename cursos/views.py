@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ComentarioForm
+from django.contrib import messages
+
 
 
 
@@ -86,6 +88,7 @@ def marcar_aula(request, aula_id):
         AulaAssistida.objects.create(aula=aula, usuario=usuario)
         usuario.pontos += 10 
         usuario.save()
+        messages.success(request, f'Você ganhou 10 pontos por concluir a aula "{aula.titulo}"!')
 
     return redirect('detalhe_curso', slug=aula.curso.slug)
 
