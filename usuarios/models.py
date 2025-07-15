@@ -22,10 +22,3 @@ class Perfil(models.Model):
 class Usuario(AbstractUser):
     foto = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
     pontos = models.IntegerField(default=0)
-
-class Pontuacao(models.Model):
-    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pontos = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f'{self.usuario.username} - {self.pontos} pontos'

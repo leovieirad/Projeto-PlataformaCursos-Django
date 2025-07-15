@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ComentarioForm
-from usuarios.models import Pontuacao
 
 
 
@@ -98,9 +97,9 @@ def desmarcar_aula(request, aula_id):
     if assistida:
         assistida.delete()
 
-        pontuacao, _ = Pontuacao.objects.get_or_create(usuario=request.user)
-        pontuacao.pontos = max(0, pontuacao.pontos - 10)  
-        pontuacao.save()
+        request.user.pontos = max(0, request.user.pontos - 10)
+        request.user.save()
+
 
     return redirect('detalhe_curso', slug=aula.curso.slug)
 
