@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from cursos.models import Matricula, AulaAssistida, Aula
 from django.contrib.auth.decorators import login_required
-from .models import Perfil
+from .models import Perfil, Usuarios
 
 User = get_user_model()
 
@@ -109,3 +109,7 @@ def perfil_usuario(request):
         'form': usuario_form,
         'perfil_form': perfil_form,
     })
+
+def ranking_usuarios(request):
+    top_usuarios = Usuario.objects.order_by('-pontos')[:10]
+    return render(request, 'usuarios/ranking.html', {'top_usuarios': top_usuarios})
