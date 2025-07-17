@@ -1,29 +1,22 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow">
-    <h1 class="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">🏆 Ranking dos Usuários</h1>
+<div class="max-w-4xl mx-auto mt-6 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
+    <h1 class="text-2xl font-bold mb-4 text-center">🏆 Ranking dos Usuários</h1>
     
-    <ul class="space-y-4">
-        {% for usuario in top_usuarios %}
-            <li class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-xl">
-                <div class="flex items-center gap-4">
-                    {% if usuario.foto_perfil %}
-                        <img src="{{ usuario.foto_perfil.url }}" class="w-12 h-12 rounded-full border-2 border-yellow-400">
-                    {% else %}
-                        <img src="{% static 'img/default-avatar.png' %}" class="w-12 h-12 rounded-full border-2 border-yellow-400">
-                    {% endif %}
-                    <div>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ usuario.first_name }} {{ usuario.last_name }}
-                        </p>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Insígnia: {{ usuario.get_insignea_display }}</p>
-                    </div>
-                </div>
-                <span class="text-xl font-bold text-indigo-600 dark:text-indigo-300">{{ usuario.pontos }} pts</span>
-            </li>
-        {% endfor %}
-    </ul>
+    {% if usuarios %}
+        <ul class="space-y-2">
+            {% for usuario in usuarios %}
+                <li class="flex justify-between bg-white dark:bg-gray-900 p-4 rounded shadow-sm">
+                    <span class="font-semibold text-gray-800 dark:text-gray-100">
+                        {{ forloop.counter }}. {{ usuario.first_name }} {{ usuario.last_name }}
+                    </span>
+                    <span class="text-blue-700 font-bold">{{ usuario.pontos }} pts</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center text-gray-600 dark:text-gray-300">Nenhum usuário com pontuação ainda.</p>
+    {% endif %}
 </div>
 {% endblock %}
