@@ -15,7 +15,11 @@
                     <span class="text-lg">
                         {{ forloop.counter }}. {{ usuario.first_name }} {{ usuario.last_name }}:
                     </span>
-                    <span class="text-lg">{{ usuario.pontos }} pts</span>
+                    <span class="text-lg flex items-center gap-2">
+                        {{ usuario.pontos }} pts
+                        <span class="text-sm">{{ usuario.insignea }}</span>
+                    </span>
+
                 </li>
             {% empty %}
                 <li class="text-center text-muted-foreground">Nenhum usuário encontrado.</li>
