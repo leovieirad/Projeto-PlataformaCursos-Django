@@ -1,22 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto mt-6 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow">
-    <h1 class="text-2xl font-bold mb-4 text-center">🏆 Ranking dos Usuários</h1>
-    
-    {% if usuarios %}
-        <ul class="space-y-2">
+<div class="min-h-screen py-10 px-4 bg-background text-foreground">
+    <div class="max-w-3xl mx-auto bg-card p-6 rounded-2xl shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 flex items-center justify-center gap-2">
+            🏆 Ranking dos Usuários
+        </h1>
+
+        <ul class="space-y-4">
             {% for usuario in usuarios %}
-                <li class="flex justify-between bg-white dark:bg-gray-900 p-4 rounded shadow-sm">
-                    <span class="font-semibold text-gray-800 dark:text-gray-100">
-                        {{ forloop.counter }}. {{ usuario.first_name }} {{ usuario.last_name }}
+                <li class="bg-muted p-4 rounded-xl flex justify-between items-center shadow transition-all 
+                    {% if forloop.first %} border-2 border-yellow-400 font-bold {% endif %}">
+                    <span class="text-lg">
+                        {{ forloop.counter }}. {{ usuario.first_name }} {{ usuario.last_name }}:
                     </span>
-                    <span class="text-blue-700 font-bold">{{ usuario.pontos }} pts</span>
+                    <span class="text-lg">{{ usuario.pontos }} pts</span>
                 </li>
+            {% empty %}
+                <li class="text-center text-muted-foreground">Nenhum usuário encontrado.</li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p class="text-center text-gray-600 dark:text-gray-300">Nenhum usuário com pontuação ainda.</p>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

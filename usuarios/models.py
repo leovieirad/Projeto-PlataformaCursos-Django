@@ -25,11 +25,11 @@ class Usuario(AbstractUser):
 
     @property
     def insignea(self):
-        if self.pontos >= 500:
+        if self.pontos >= 140:
             return "🏆 Mestre"
-        elif self.pontos >= 200:
-            return "🥇 Avançado"
         elif self.pontos >= 100:
+            return "🥇 Avançado"
+        elif self.pontos >= 80:
             return "🥈 Intermediário"
         elif self.pontos >= 50:
             return "🥉 Iniciante"
