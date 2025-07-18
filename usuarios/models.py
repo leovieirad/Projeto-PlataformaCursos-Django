@@ -22,6 +22,12 @@ class Perfil(models.Model):
 class Usuario(AbstractUser):
     foto = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
     pontos = models.IntegerField(default=0)
+    ultima_insignia = models.CharField(max_length=50, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.ultima_insignia:
+            self.ultima_insignia = self.insignea
+        super().save(*args, **kwargs)
 
     @property
     def insignea(self):

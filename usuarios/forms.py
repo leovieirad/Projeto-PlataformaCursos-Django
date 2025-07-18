@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from .models import Perfil
 
+
 Usuario = get_user_model()
 
 class UsuarioForm(forms.ModelForm):
@@ -11,8 +12,6 @@ class UsuarioForm(forms.ModelForm):
         model = Usuario
         fields = ['first_name', 'last_name']
 
-from django import forms
-from .models import Perfil
 
 class PerfilForm(forms.ModelForm):
     class Meta:
