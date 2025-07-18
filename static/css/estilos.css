@@ -1,0 +1,9 @@
+.btn-outline-purple {
+    color: #7023ff;
+    border-color: #7023ff;
+}
+
+.btn-outline-purple:hover {
+    background-color: #7023ff;
+    color: #fff;
+}
